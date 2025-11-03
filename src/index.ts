@@ -4,6 +4,8 @@ import {
 } from '@jupyterlab/application';
 import { ImageCaptionMainAreaWidget } from './widget';
 import { ICommandPalette } from '@jupyterlab/apputils';
+import { ILauncher } from '@jupyterlab/launcher'
+import { imageIcon } from '@jupyterlab/ui-components';
 
 import { requestAPI } from './request';
 
@@ -14,10 +16,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
   id: 'jupytercon2025-extension-workshop:plugin',
   description: 'A JupyterLab extension that displays a random image and caption.',
   autoStart: true,
-  requires: [ICommandPalette],  // dependencies of our extension
+  requires: [ICommandPalette, ILauncher],  // dependencies of our extension
   activate: (
     app: JupyterFrontEnd,
-    palette: ICommandPalette
+    palette: ICommandPalette,
+    launcher: ILauncher
   
   ) => {
     console.log('JupyterLab extension jupytercon2025-extension-workshop is activated!');
@@ -32,7 +35,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         );
       });
     
-      //Register a new command:
+    //Register a new command:
     const command_id = 'image-caption:open';
     app.commands.addCommand(command_id, {
       execute: () => {
@@ -43,10 +46,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
         app.shell.add(widget, 'main');
         return widget;
       },
+      icon: imageIcon,
       label: 'View a random image & caption'
     });
 
     palette.addItem({ command: command_id, category: 'Tutorial' });
+    launcher.add({ command: command_id });
   }
 };
 
